@@ -9,21 +9,25 @@ const Checkout = () => {
   const navigate = useNavigate();
   const { state, dispatch } = useCart();
   const cartItems = state.cart.cartItems;
-  const updateQuantity = (item, newQuantity) => {
-    if (newQuantity > 0) {
-      const updatedItem = { ...item, quantity: newQuantity };
-      dispatch({ type: "ADD_TO_CART", payload: updatedItem });
-    }
+  const increaseQuantity = (item) => {
+    dispatch({
+      type: "UPDATE_QUANTITY",
+      payload: (cartItems.quantity || 1) + 1,
+    });
   };
 
-  const removeItem = (item) => {
+  const decreaseQuantity = () => {
+    dispatch({
+      type: "UPDATE_QUANTITY",
+      payload: cartItems.quantity - 1,
+    });
+  };
+
+  const removeItem = () => {
     dispatch({ type: "REMOVE_FROM_CART", payload: item });
   };
 
-  const totalPrice = cartItems.reduce(
-    (total, item) => total + item.discount_price * item.quantity || 1,
-    0
-  );
+  const totalPrice = cartItems.discount_price * cartItems.quantity;
 
   const {
     register,
@@ -31,27 +35,20 @@ const Checkout = () => {
     handleSubmit,
   } = useForm();
 
-  const test = cartItems.reduce(
-    (total, item) => total + item.discount_price,
-    0
-  );
-
-  const submitHandler = async (data) => {
+  const submitHandler = async (formData) => {
     const orderData = {
-      ...data,
-      course_id: cartItems[0].id,
-      course_fee: cartItems.reduce(
-        (total, item) => total + item.discount_price,
-        0
-      ),
-      course_qty: cartItems.reduce((total, item) => total + item.quantity, 0),
-      total_course_fee: totalPrice,
-      discount_course_fee: 0,
-      sub_total_course_fee: totalPrice,
-      photo: data.photo[0],
+      ...formData,
+      course_id: cartItems.id,
+      course_fee: cartItems.regular_price,
+      course_qty: cartItems.quantity,
+      total_course_fee: cartItems.regular_price * cartItems.quantity,
+      discount_course_fee:
+        cartItems.regular_price - cartItems.discount_price * cartItems.quantity,
+      sub_total_course_fee: cartItems.discount_price * cartItems.quantity,
+      photo: formData.photo[0],
     };
-
-    const response = await axios.post(
+    console.log(orderData);
+    const { data } = await axios.post(
       "https://itder.com/api/course-purchase",
       orderData,
       {
@@ -60,7 +57,7 @@ const Checkout = () => {
         },
       }
     );
-    navigate("/order-details", { state: { orderData, res } });
+    navigate("/order-details", { state: { formData, data } });
     dispatch({ type: "CLEAR_CART" });
   };
 
@@ -361,80 +358,74 @@ const Checkout = () => {
                   </thead>
 
                   <tbody className="overflow-x-auto ">
-                    {cartItems.map((item) => (
-                      <tr
-                        key={item.id}
-                        className="border-b border-gray-300 overflow-x-auto"
-                      >
-                        <td>
-                          <div className="flex items-center justify-center ">
-                            <div
-                              className="w-[20%] text-center flex items-center justify-center cursor-pointer"
-                              onClick={() => removeItem(item)}
-                            >
-                              <RiDeleteBin5Line className="text-xl hover:text-footer_color cursor-pointer" />
-                            </div>
-                            <div className="flex flex-col text-center justify-center items-center py-2  w-[80%]">
-                              <div className="mask">
-                                <img
-                                  className="h-[40px] w-[70px] object-contain"
-                                  src={item.photo}
-                                  alt="Course"
-                                />
-                              </div>
-                              <p className="text-[14.4px] px-[7px] text-center flex ">
-                                {item.course_name}
-                              </p>
-                            </div>
+                    <tr
+                      key={cartItems.id}
+                      className="border-b border-gray-300 overflow-x-auto"
+                    >
+                      <td>
+                        <div className="flex items-center justify-center ">
+                          <div
+                            className="w-[20%] text-center flex items-center justify-center cursor-pointer"
+                            onClick={() => removeItem(cartItems)}
+                          >
+                            <RiDeleteBin5Line className="text-xl hover:text-footer_color cursor-pointer" />
                           </div>
-                        </td>
-                        <td>
-                          <p className="text-[14.4px] font-bold p-[7px] text-black text-center">
-                            {item.discount_price}
-                          </p>
-                        </td>
-                        <td>
-                          <div className="flex justify-center">
-                            <div className="border">
-                              <button
-                                disabled={item.quantity === 1}
-                                className="px-4 w-[30px] font-bold font_standard my-1.5"
-                                onClick={() =>
-                                  updateQuantity(item, (item.quantity || 1) - 1)
-                                }
-                              >
-                                -
-                              </button>
+                          <div className="flex flex-col text-center justify-center items-center py-2  w-[80%]">
+                            <div className="mask">
+                              <img
+                                className="h-[40px] w-[70px] object-contain"
+                                src={cartItems.photo}
+                                alt="Course"
+                              />
                             </div>
-                            <div className="border-y">
-                              {/* <input
+                            <p className="text-[14.4px] px-[7px] text-center flex ">
+                              {cartItems.course_name}
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <p className="text-[14.4px] font-bold p-[7px] text-black text-center">
+                          {cartItems.discount_price}
+                        </p>
+                      </td>
+                      <td>
+                        <div className="flex justify-center">
+                          <div className="border">
+                            <button
+                              disabled={cartItems.quantity <= 1}
+                              className="px-4 w-[30px] font-bold font_standard my-1.5"
+                              onClick={decreaseQuantity}
+                            >
+                              -
+                            </button>
+                          </div>
+                          <div className="border-y">
+                            {/* <input
                             type="number"
                             className="font-bold w-[30px] lg:w-[60px] font_standard px-2 text-center mx-auto h-full"
                             value={item.quantity}
                           /> */}
-                              <span className="font-bold w-[30px] lg:w-[60px] font_standard px-2 text-center mx-auto h-full flex items-center justify-center">
-                                {item.quantity || 1}
-                              </span>
-                            </div>
-                            <div className="border">
-                              <button
-                                onClick={() =>
-                                  updateQuantity(item, (item.quantity || 1) + 1)
-                                }
-                                className="px-4 w-[30px] font-bold font_standard my-1.5"
-                              >
-                                +
-                              </button>
-                            </div>
+                            <span className="font-bold w-[30px] lg:w-[60px] font_standard px-2 text-center mx-auto h-full flex items-center justify-center">
+                              {cartItems.quantity || 1}
+                            </span>
                           </div>
-                        </td>
-                        <td>
-                          <p className="text-[14.4px] font-bold p-[7px] text-black text-center">
-                            {(item.discount_price * item.quantity).toFixed(2)}
-                          </p>
-                        </td>
-                      </tr>
-                    ))}
+                          <div className="border">
+                            <button
+                              onClick={increaseQuantity}
+                              className="px-4 w-[30px] font-bold font_standard my-1.5"
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <p className="text-[14.4px] font-bold p-[7px] text-black text-center">
+                          {cartItems.discount_price * cartItems.quantity}
+                        </p>
+                      </td>
+                    </tr>
                   </tbody>
                 </table>
               </div>
