@@ -1,22 +1,24 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { IoMdSearch } from "react-icons/io";
 import { useSearchParams } from "react-router-dom";
 
 const Search = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [result, setResult] = useState();
+  const [phone, setPhone] = useState();
   const [error, setError] = useState();
 
   const [searchTerm, setSearchTerm] = useState(
     searchParams.get("formno") || ""
   );
   // taking phone from localstorage
-  const shipping = JSON.parse(localStorage.getItem("shippingAddress"));
+  // const shipping = JSON.parse(localStorage.getItem("shippingAddress"));
 
   const [loading, setLoading] = useState(false);
 
   const handleSearch = async (e) => {
+    setError("");
+    setResult();
     e.preventDefault();
     try {
       // Handle the search logic here
@@ -25,14 +27,15 @@ const Search = () => {
         "https://itder.com/api/search-purchase-data",
         {
           form_no: searchTerm,
-          phone_no: shipping.phone_no,
+          phone_no: phone,
         }
       );
+
       setResult(data.singleCoursePurchaseData);
 
       console.log("Searching for:", searchTerm);
     } catch (err) {
-      setError("API Error");
+      setError("Please check your information!");
     } finally {
       setLoading(false);
     }
@@ -42,32 +45,49 @@ const Search = () => {
     <div>
       <h1 className="text-center font-semibold text-2xl">Search</h1>
       <form onSubmit={(e) => handleSearch(e)} action="">
-        <div className="h-[52px] relative col-span-4 w-[600px] mx-auto">
+        <div className="h-[52px] relative col-span-4 w-[80vw] lg:w-[50vw] mx-auto">
           <input
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             type="text"
             name="search"
-            placeholder="search"
+            placeholder="Form No."
             className="text-black px-2 w-full block h-full outline-0 rounded-[4px] border"
           />
-          <IoMdSearch className="text-2xl text-black absolute right-2 top-2" />
+          <input
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            type="text"
+            name="phone"
+            placeholder="Phone Number"
+            className="text-black px-2 w-full block h-full outline-0 rounded-[4px] border"
+          />
+          <div className="flex justify-center items-center">
+            <button
+              type="submit"
+              className="flex items-center justify-center my-2 bg-blue-400 text-white px-6 py-2"
+            >
+              Search
+            </button>
+          </div>
+          {error ? (
+            <div className="flex justify-center items-center">
+              <p className="text-red-500 text-2xl font-bold">{error}</p>
+            </div>
+          ) : (
+            ""
+          )}
         </div>
-        {error ? (
-          <p className="text-red-500 text-2xl font-bold">{error}</p>
-        ) : (
-          ""
-        )}
       </form>
       {loading ? (
-        <h1 className="flex items-center justify-center text-3xl font-semibold">
-          Loading...
-        </h1>
+        <div className="flex justify-center items-center h-[50vh]">
+          <h1 className="text-3xl font-semibold">Loading...</h1>
+        </div>
       ) : (
         ""
       )}
       {result && (
-        <div className="w-full flex flex-col lg:flex-row items-start justify-center h-full gap-2 ">
+        <div className="mt-32 w-full flex flex-col lg:flex-row items-start justify-center h-full gap-2 ">
           <div className="bg-white lg:p-p_30px w-full  ">
             <div className="text-center  flex flex-col justify-center items-center ">
               <p className="text-xl font-bold">Order Information</p>
