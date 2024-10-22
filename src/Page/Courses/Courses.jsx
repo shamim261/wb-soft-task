@@ -19,7 +19,8 @@ const Courses = () => {
   const { state, dispatch } = useCart();
 
   const handleAddToCart = (course) => {
-    dispatch({ type: "ADD_TO_CART", payload: course });
+    let updatedCourse = { ...course, quantity: 1 };
+    dispatch({ type: "ADD_TO_CART", payload: updatedCourse });
     // Check if the course is already in the cart
     const isAlreadyInCart = state.cart.cartItems.some(
       (item) => item.id === course.id
