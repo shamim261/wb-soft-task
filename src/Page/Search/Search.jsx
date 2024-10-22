@@ -18,10 +18,6 @@ const Search = () => {
 
   const handleSearch = async (e) => {
     e.preventDefault();
-    if (!shipping.phone_no) {
-      setError("No Phone number found!");
-      return;
-    }
     try {
       // Handle the search logic here
       setLoading(true);
@@ -36,7 +32,7 @@ const Search = () => {
 
       console.log("Searching for:", searchTerm);
     } catch (err) {
-      setError(err);
+      setError("API Error");
     } finally {
       setLoading(false);
     }
@@ -57,6 +53,11 @@ const Search = () => {
           />
           <IoMdSearch className="text-2xl text-black absolute right-2 top-2" />
         </div>
+        {error ? (
+          <p className="text-red-500 text-2xl font-bold">{error}</p>
+        ) : (
+          ""
+        )}
       </form>
       {loading ? (
         <h1 className="flex items-center justify-center text-3xl font-semibold">
@@ -67,7 +68,6 @@ const Search = () => {
       )}
       {result && (
         <div className="w-full flex flex-col lg:flex-row items-start justify-center h-full gap-2 ">
-          {error ? <p className="text-red-500">Error</p> : ""}
           <div className="bg-white lg:p-p_30px w-full  ">
             <div className="text-center  flex flex-col justify-center items-center ">
               <p className="text-xl font-bold">Order Information</p>
