@@ -13,7 +13,7 @@ import useUser from "../../Security/useUser";
 const NavbarTop = () => {
   const { open, setOpen, sidebarRef } = useContext(OrderContext);
   const { state, dispatch } = useCart();
-  const cartItems = state.cart.cartItems;
+  const cartItems = state?.cart?.cartItems;
   const [isSmallScreen] = useSmallScreen();
   const axiosSecure = useAxiosSecure();
   const navigate = useNavigate();
@@ -81,7 +81,7 @@ const NavbarTop = () => {
             >
               <ShoppingCartIcon className="w-6 h-6" color="black" />
               <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                {cartItems.length}
+                {cartItems.quantity}
               </span>
             </div>
 

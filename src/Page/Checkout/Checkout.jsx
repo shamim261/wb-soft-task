@@ -2,9 +2,11 @@ import axios from "axios";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { RiDeleteBin5Line } from "react-icons/ri";
+import { useNavigate } from "react-router-dom";
 import { useCart } from "../../ContextAPIs/CartContext";
 
 const Checkout = () => {
+  const navigate = useNavigate();
   const { state, dispatch } = useCart();
   const cartItems = state.cart.cartItems;
   const updateQuantity = (item, newQuantity) => {
@@ -28,48 +30,38 @@ const Checkout = () => {
     formState: { errors },
     handleSubmit,
   } = useForm();
-  dob: "2024-10-23";
-  email: "shamim@test.com";
-  formNo: "dafdf";
-  fullName: "sdsd";
-  gender: "Female";
-  guardianName: "sdffsd";
-  jobInfo: "sdfsdf";
-  mobile: "sdfsd";
-  nid: "dsfsdf";
-  parentName: "dafdsf";
-  parentNumber: "sdfsdf";
-  permanentAddress: "sdf";
-  presentAddress: "sdfds";
-  school: "dc";
-  const submitHandler = async (data) => {
-    console.log(data);
-    const userData = {
-      course_id: 1,
-      admission_date: new Date().toJSON().slice(0, 10),
-      // photo,
-      name: data.fullName,
-      father_name: data.guardianName,
-      father_phone: data.parentNumber,
-      school_collage_name: data.school,
-      job_title: data.jobInfo,
 
-      gender: data.gender,
-      email: data.email,
-      phone_no: data.mobile,
-      present_address: data.presentAddress,
-      permanent_address: data.permanentAddress,
-      nid_no: data.nid,
-      local_guardian_name: data.localGuardianName,
-      local_guardian_phone: data.mobile,
-      date_of_birth: data.dob,
-      blood_group: data.bloodGroup,
+  const test = cartItems.reduce(
+    (total, item) => total + item.discount_price,
+    0
+  );
+
+  const submitHandler = async (data) => {
+    const orderData = {
+      ...data,
+      course_id: cartItems[0].id,
+      course_fee: cartItems.reduce(
+        (total, item) => total + item.discount_price,
+        0
+      ),
+      course_qty: cartItems.reduce((total, item) => total + item.quantity, 0),
+      total_course_fee: totalPrice,
+      discount_course_fee: 0,
+      sub_total_course_fee: totalPrice,
+      photo: data.photo[0],
     };
+
     const response = await axios.post(
       "https://itder.com/api/course-purchase",
-      data
+      orderData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
     );
-    console.log(response);
+    navigate("/order-details", { state: { orderData, res } });
+    dispatch({ type: "CLEAR_CART" });
   };
 
   return (
@@ -86,29 +78,29 @@ const Checkout = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
               <label
-                htmlFor="fullName"
+                htmlFor="name"
                 className="block font-semibold text-base mb-2"
               >
                 Full Name:
               </label>
               <input
-                {...register("fullName", { required: true })}
+                {...register("name", { required: true })}
                 type="text"
-                id="fullName"
+                id="name"
                 className="w-full border border-gray-300 rounded-md p-2"
               />
             </div>
             <div>
               <label
-                htmlFor="formNo"
+                htmlFor="phone_no"
                 className="block font-semibold text-base mb-2"
               >
-                Form no:
+                Phone No:
               </label>
               <input
-                {...register("formNo", { required: true })}
-                type="text"
-                id="formNo"
+                {...register("phone_no", { required: true })}
+                type="number"
+                id="phone_no"
                 className="w-full border border-gray-300 rounded-md p-2"
               />
             </div>
@@ -117,29 +109,29 @@ const Checkout = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
               <label
-                htmlFor="parentName"
+                htmlFor="father_name"
                 className="block font-semibold text-base mb-2"
               >
                 Father/Mother Name:
               </label>
               <input
-                {...register("parentName", { required: true })}
+                {...register("father_name", { required: true })}
                 type="text"
-                id="parentName"
+                id="father_name"
                 className="w-full border border-gray-300 rounded-md p-2"
               />
             </div>
             <div>
               <label
-                htmlFor="parentNumber"
+                htmlFor="father_phone_no"
                 className="block font-semibold text-base mb-2"
               >
-                Number:
+                Father Phone No:
               </label>
               <input
-                {...register("parentNumber", { required: true })}
-                type="text"
-                id="parentNumber"
+                {...register("father_phone_no", { required: true })}
+                type="number"
+                id="father_phone_no"
                 className="w-full border border-gray-300 rounded-md p-2"
               />
             </div>
@@ -148,29 +140,29 @@ const Checkout = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
               <label
-                htmlFor="school"
+                htmlFor="school_collage_name"
                 className="block font-semibold text-base mb-2"
               >
-                School/College:
+                School/College Name:
               </label>
               <input
-                {...register("school", { required: true })}
+                {...register("school_collage_name", { required: true })}
                 type="text"
-                id="school"
+                id="school_collage_name"
                 className="w-full border border-gray-300 rounded-md p-2"
               />
             </div>
             <div>
               <label
-                htmlFor="jobInfo"
+                htmlFor="job_title"
                 className="block font-semibold text-base mb-2"
               >
                 Job Information:
               </label>
               <input
-                {...register("jobInfo", { required: true })}
+                {...register("job_title", { required: true })}
                 type="text"
-                id="jobInfo"
+                id="job_title"
                 className="w-full border border-gray-300 rounded-md p-2"
               />
             </div>
@@ -222,21 +214,21 @@ const Checkout = () => {
                 Present Address:
               </label>
               <textarea
-                {...register("presentAddress", { required: true })}
-                id="presentAddress"
+                {...register("present_address", { required: true })}
+                id="present_address"
                 className="w-full border border-gray-300 rounded-md p-2"
               />
             </div>
             <div>
               <label
-                htmlFor="permanentAddress"
+                htmlFor="permanent_address"
                 className="block font-semibold text-base mb-2"
               >
                 Permanent Address:
               </label>
               <textarea
-                {...register("permanentAddress", { required: true })}
-                id="permanentAddress"
+                {...register("permanent_address", { required: true })}
+                id="permanent_address"
                 className="w-full border border-gray-300 rounded-md p-2"
               />
             </div>
@@ -245,29 +237,29 @@ const Checkout = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
               <label
-                htmlFor="nid"
+                htmlFor="nid_no"
                 className="block font-semibold text-base mb-2"
               >
                 NID Number:
               </label>
               <input
-                {...register("nid", { required: true })}
+                {...register("nid_no", { required: true })}
                 type="text"
-                id="nid"
+                id="nid_no"
                 className="w-full border border-gray-300 rounded-md p-2"
               />
             </div>
             <div>
               <label
-                htmlFor="mobile"
+                htmlFor="local_guardian_phone_no"
                 className="block font-semibold text-base mb-2"
               >
-                Mobile No:
+                Local Guardian Phone No:
               </label>
               <input
-                {...register("mobile", { required: true })}
-                type="text"
-                id="mobile"
+                {...register("local_guardian_phone_no", { required: true })}
+                type="number"
+                id="local_guardian_phone_no"
                 className="w-full border border-gray-300 rounded-md p-2"
               />
             </div>
@@ -276,29 +268,29 @@ const Checkout = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
               <label
-                htmlFor="localGuardianName"
+                htmlFor="local_guardian_name"
                 className="block font-semibold text-base mb-2"
               >
                 Local Guardian’s Name:
               </label>
               <input
-                {...register("localGuardianName", { required: true })}
+                {...register("local_guardian_name", { required: true })}
                 type="text"
-                id="localGuardianName"
+                id="local_guardian_name"
                 className="w-full border border-gray-300 rounded-md p-2"
               />
             </div>
             <div>
               <label
-                htmlFor="dob"
+                htmlFor="date_of_birth"
                 className="block font-semibold text-base mb-2"
               >
                 Date of Birth:
               </label>
               <input
-                {...register("dob", { required: true })}
+                {...register("date_of_birth", { required: true })}
                 type="date"
-                id="dob"
+                id="date_of_birth"
                 className="w-full border border-gray-300 rounded-md p-2"
               />
             </div>
@@ -307,13 +299,14 @@ const Checkout = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
               <label
-                htmlFor="bloodGroup"
+                htmlFor="blood_group"
                 className="block font-semibold text-base mb-2"
               >
                 Blood Group:
               </label>
               <select
-                id="bloodGroup"
+                {...register("blood_group", { required: true })}
+                id="blood_group"
                 className="w-full border border-gray-300 rounded-md p-2"
               >
                 <option value="" disabled selected>
@@ -328,6 +321,19 @@ const Checkout = () => {
                 <option value="O+">O+</option>
                 <option value="O-">O-</option>
               </select>
+            </div>
+            <div>
+              <label
+                htmlFor="photo"
+                className="block font-semibold text-base mb-2"
+              >
+                Photo:
+              </label>
+              <input
+                {...register("photo", { required: true })}
+                type="file"
+                id="photo"
+              />
             </div>
           </div>
         </div>

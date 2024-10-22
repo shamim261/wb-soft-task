@@ -17,19 +17,16 @@ const Courses = () => {
 
   // add to cart
   const { state, dispatch } = useCart();
+  const cartItems = state?.cart?.cartItems;
 
   const handleAddToCart = (course) => {
-    let updatedCourse = { ...course, quantity: 1 };
-    dispatch({ type: "ADD_TO_CART", payload: updatedCourse });
-    // Check if the course is already in the cart
-    const isAlreadyInCart = state.cart.cartItems.some(
-      (item) => item.id === course.id
-    );
-
-    if (isAlreadyInCart) {
-      toast.info("This course is already in your cart");
+    if (state.cart.cartItems.id) {
+      toast.info("You can only add one course to cart");
       return;
     }
+    let updatedCourse = { ...course, quantity: 1 };
+    dispatch({ type: "ADD_TO_CART", payload: updatedCourse });
+
     toast.success("Successfully added to cart");
   };
 

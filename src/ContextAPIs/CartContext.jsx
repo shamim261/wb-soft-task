@@ -13,42 +13,38 @@ const initialState = {
       : {},
     cartItems: localStorage.getItem("cartItems")
       ? JSON.parse(localStorage.getItem("cartItems"))
-      : [],
+      : {},
   },
 };
 
 const reducer = (state, action) => {
   switch (action.type) {
     case "ADD_TO_CART":
-      const newItem = action.payload;
-      // check if the item already exists in the cart
-      const existingItem = state.cart.cartItems.find(
-        (item) => item.id === newItem.id
-      );
-      // if the item exists, update the quantity
-      const cartItems = existingItem
-        ? state.cart.cartItems.map((item) =>
-            item.id === existingItem.id ? newItem : item
-          )
-        : [...state.cart.cartItems, newItem];
-      // save the updated cart items to local storage
-      localStorage.setItem("cartItems", JSON.stringify(cartItems));
-      return { ...state, cart: { ...state.cart, cartItems } };
+      localStorage.setItem("cartItems", JSON.stringify(action.payload));
+      return { ...state, cart: { ...state.cart, cartItems: action.payload } };
+    case "UPDATE_QUANTITY":
+      return {
+        ...state,
+        cart: {
+          ...state.cart,
+          cartItems: {
+            ...state.cart.cartItems,
+            quantity: action.payload,
+          },
+        },
+      };
     case "REMOVE_FROM_CART":
-      const itemToRemove = action.payload;
-      // remove the item from the cart
-      const updatedCartItems = state.cart.cartItems.filter(
-        (item) => item.id !== itemToRemove.id
-      );
-      // save the updated cart items to local storage
-      localStorage.setItem("cartItems", JSON.stringify(updatedCartItems));
-      return { ...state, cart: { ...state.cart, cartItems: updatedCartItems } };
+      localStorage.removeItem("cartItems");
+      return { ...state, cart: { ...state.cart, cartItems: [] } };
     case "SAVE_SHIPPING_ADDRESS":
       localStorage.setItem("shippingAddress", JSON.stringify(action.payload));
       return {
         ...state,
         cart: { ...state.cart, shippingAddress: action.payload },
       };
+    case "CLEAR_CART":
+      localStorage.removeItem("cartItems");
+      return { ...state, cart: { ...state.cart, cartItems: [] } };
     default:
       return state;
   }
