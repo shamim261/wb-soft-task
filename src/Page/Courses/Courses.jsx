@@ -65,9 +65,7 @@ const Courses = () => {
                     {course.course_name}
                   </h2>
                   <div className="flex items-center justify-between mb-4">
-                    <span className="flex text-blue-500 text-md">
-                      ★★★★★(no need to change)
-                    </span>
+                    <span className="flex text-blue-500 text-md">★★★★★</span>
                     <span className="ml-2 text-gray-600 text-md font-bold">
                       {course.trainer_data?.name}
                     </span>
@@ -81,8 +79,8 @@ const Courses = () => {
                             </div> */}
                   <p className="text-gray-600 text-md mb-4">
                     Course Details{" "}
-                    <span className="text-blue-500">
-                      Show Details(no need to change)
+                    <span className="text-blue-500 cursor-pointer">
+                      Show Details
                     </span>
                   </p>
                   <hr />
