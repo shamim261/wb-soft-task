@@ -1,25 +1,28 @@
-import ReactDOM from "react-dom/client";
-import "./index.css";
-import { RouterProvider } from "react-router-dom";
-import Router from "./Router/Router.jsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import "aos/dist/aos.css";
+import "primereact/resources/themes/lara-light-cyan/theme.css";
+import ReactDOM from "react-dom/client";
+import { RouterProvider } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import OrderProvider from "./ContextAPIs/OrderProvider";
-const queryClient = new QueryClient();
-import "primereact/resources/themes/lara-light-cyan/theme.css";
 import BasicProvider from "./ContextAPIs/BasicProvider.jsx";
-import 'aos/dist/aos.css';
+import { CartProvider } from "./ContextAPIs/CartContext.jsx";
+import OrderProvider from "./ContextAPIs/OrderProvider";
+import "./index.css";
+import Router from "./Router/Router.jsx";
+const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <>
     <ToastContainer />
     <QueryClientProvider client={queryClient}>
-      <OrderProvider>
-        <BasicProvider>
-          <RouterProvider router={Router} />
-        </BasicProvider>
-      </OrderProvider>
+      <CartProvider>
+        <OrderProvider>
+          <BasicProvider>
+            <RouterProvider router={Router} />
+          </BasicProvider>
+        </OrderProvider>
+      </CartProvider>
     </QueryClientProvider>
   </>
 );
