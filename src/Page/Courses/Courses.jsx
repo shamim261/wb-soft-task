@@ -1,5 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { useCart } from "../../ContextAPIs/CartContext";
 
 const Courses = () => {
   const [courses, setCourses] = useState([]);
@@ -12,6 +14,23 @@ const Courses = () => {
     };
     getData();
   }, []);
+
+  // add to cart
+  const { state, dispatch } = useCart();
+
+  const handleAddToCart = (course) => {
+    dispatch({ type: "ADD_TO_CART", payload: course });
+    // Check if the course is already in the cart
+    const isAlreadyInCart = state.cart.cartItems.some(
+      (item) => item.id === course.id
+    );
+
+    if (isAlreadyInCart) {
+      toast.info("This course is already in your cart");
+      return;
+    }
+    toast.success("Successfully added to cart");
+  };
 
   // pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -82,8 +101,10 @@ const Courses = () => {
                 {/* <span className="text-green-600 text-sm">Earn Tk 48</span> */}
               </div>
               <div className="mt-4 flex gap-2">
-                <button className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-500 w-full font-bold text-md">
-                  {/* TODO: Add to cart functionality */}
+                <button
+                  className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-500 w-full font-bold text-md"
+                  onClick={() => handleAddToCart(course)}
+                >
                   Add To Cart
                 </button>
               </div>
