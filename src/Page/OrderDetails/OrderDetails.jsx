@@ -1,11 +1,13 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const OrderDetails = () => {
+  const navigate = useNavigate();
   const { state } = useLocation();
+  if (!state) {
+    navigate("/course");
+    return;
+  }
   const { formData, data } = state;
-
-  console.log(formData);
-  console.log(data);
 
   return (
     <div className=" m-mt_16px">
