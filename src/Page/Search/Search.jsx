@@ -17,13 +17,13 @@ const Search = () => {
   const [loading, setLoading] = useState(false);
 
   const handleSearch = async (e) => {
+    e.preventDefault();
     if (!shipping.phone_no) {
       setError("No Phone number found!");
       return;
     }
     try {
       // Handle the search logic here
-      e.preventDefault();
       setLoading(true);
       const { data } = await axios.post(
         "https://itder.com/api/search-purchase-data",

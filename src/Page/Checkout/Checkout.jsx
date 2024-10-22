@@ -1,5 +1,5 @@
 import axios from "axios";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
@@ -10,7 +10,7 @@ const Checkout = () => {
   const navigate = useNavigate();
   const { state, dispatch } = useCart();
   const cartItems = state.cart.cartItems;
-  const increaseQuantity = (item) => {
+  const increaseQuantity = () => {
     dispatch({
       type: "UPDATE_QUANTITY",
       payload: (cartItems.quantity || 1) + 1,
@@ -196,7 +196,7 @@ const Checkout = () => {
                 id="gender"
                 className="w-full border border-gray-300 rounded-md p-2"
               >
-                <option value="" disabled selected>
+                <option value="" disabled>
                   Select Gender
                 </option>
                 <option value="Female">Female</option>
@@ -310,7 +310,7 @@ const Checkout = () => {
                 id="blood_group"
                 className="w-full border border-gray-300 rounded-md p-2"
               >
-                <option value="" disabled selected>
+                <option value="" disabled>
                   Select Blood Group
                 </option>
                 <option value="A+">A+</option>
