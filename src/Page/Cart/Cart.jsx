@@ -16,12 +16,10 @@ const Cart = () => {
   };
 
   const decreaseQuantity = () => {
-    if (item.quantity > 1) {
-      dispatch({
-        type: "UPDATE_QUANTITY",
-        payload: cartItems.quantity - 1,
-      });
-    }
+    dispatch({
+      type: "UPDATE_QUANTITY",
+      payload: cartItems.quantity - 1,
+    });
   };
 
   const removeItem = () => {
@@ -95,7 +93,7 @@ const Cart = () => {
                       <div className="flex justify-center">
                         <div className="border">
                           <button
-                            disabled={cartItems.quantity === 1}
+                            disabled={cartItems.quantity <= 1}
                             className="px-4 w-[30px] font-bold font_standard my-1.5"
                             onClick={decreaseQuantity}
                           >
