@@ -58,6 +58,7 @@ const Checkout = () => {
       }
     );
     navigate("/order-details", { state: { formData, data } });
+    dispatch({ type: "SAVE_SHIPPING_ADDRESS", payload: formData });
     dispatch({ type: "CLEAR_CART" });
   };
 
