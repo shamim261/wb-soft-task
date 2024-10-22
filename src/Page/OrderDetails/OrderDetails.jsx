@@ -130,7 +130,7 @@ const OrderDetails = () => {
                     {data.coursePurchaseData.course_qty}
                   </td>
                   <td className="lg:py-6 md:py-4 py-2 text-center border">
-                    {data.coursePurchaseData.course_fee}
+                    {Math.abs(data.coursePurchaseData.discount_course_fee)}
                   </td>
                   <td className="lg:py-6 md:py-4 py-2 text-center border">
                     {data.coursePurchaseData.sub_total_course_fee}
