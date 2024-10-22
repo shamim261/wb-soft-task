@@ -21,6 +21,7 @@
     "jspdf-autotable": "^3.8.2",
     "localforage": "^1.10.0",
     "lottie-react": "^2.4.0",
+    "lucide-react": "^0.453.0",
     "match-sorter": "^6.3.4",
     "mathjax": "^3.2.2",
     "mathjax-react": "^2.0.1",
