@@ -29,7 +29,7 @@ const Courses = () => {
             className=" bg-white shadow-lg rounded-lg overflow-hidden"
           >
             <div className="relative">
-              <img src={course.photo} alt="" />
+              <img src={course.photo} alt="" className="min-h-[370px]" />
               <div className="absolute top-0 left-0 p-2">
                 <h3 className="text-white text-xl font-bold">
                   {course.course_name}
