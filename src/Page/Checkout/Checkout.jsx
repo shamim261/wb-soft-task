@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useCart } from "../../ContextAPIs/CartContext";
 
 const Checkout = () => {
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { state, dispatch } = useCart();
   const cartItems = state.cart.cartItems;
@@ -47,7 +48,7 @@ const Checkout = () => {
       sub_total_course_fee: cartItems.discount_price * cartItems.quantity,
       photo: formData.photo[0],
     };
-
+    setLoading(true);
     const { data } = await axios.post(
       "https://itder.com/api/course-purchase",
       orderData,
@@ -57,7 +58,9 @@ const Checkout = () => {
         },
       }
     );
+
     navigate("/order-details", { state: { formData, data } });
+    setLoading(false);
     dispatch({ type: "SAVE_SHIPPING_ADDRESS", payload: formData });
     dispatch({ type: "CLEAR_CART" });
   };
@@ -442,7 +445,7 @@ const Checkout = () => {
 
                   <button
                     type="submit"
-                    state={"bdt"}
+                    disabled={loading}
                     className="font-medium text-black mb-2 border-2 hover:bg-[#D2C5A2] duration-300 py-2 px-4  block text-center mx-auto w-full"
                   >
                     Submit
