@@ -10,7 +10,6 @@ const Courses = () => {
     const getData = async () => {
       const { data } = await axios.get("https://itder.com/api/get-course-list");
       setCourses(data.courseData);
-      console.log(courses);
     };
     getData();
   }, []);

@@ -47,7 +47,7 @@ const Checkout = () => {
       sub_total_course_fee: cartItems.discount_price * cartItems.quantity,
       photo: formData.photo[0],
     };
-    console.log(orderData);
+
     const { data } = await axios.post(
       "https://itder.com/api/course-purchase",
       orderData,
@@ -64,7 +64,7 @@ const Checkout = () => {
 
   return (
     <div className="  mt-5 border mx-2">
-      <div class="bg-[#6f42c1] text-white p-6 text-center mb-5">
+      <div className="bg-[#6f42c1] text-white p-6 text-center mb-5">
         <h2 className="text-5xl font-bold">Trainee Admission Form</h2>
       </div>
       <form
