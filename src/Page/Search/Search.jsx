@@ -6,29 +6,40 @@ import { useSearchParams } from "react-router-dom";
 const Search = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [result, setResult] = useState();
+  const [error, setError] = useState();
 
   const [searchTerm, setSearchTerm] = useState(
     searchParams.get("formno") || ""
   );
+  // taking phone from localstorage
   const shipping = JSON.parse(localStorage.getItem("shippingAddress"));
 
   const [loading, setLoading] = useState(false);
 
   const handleSearch = async (e) => {
-    // Handle the search logic here
-    e.preventDefault();
-    setLoading(true);
-    const { data } = await axios.post(
-      "https://itder.com/api/search-purchase-data",
-      {
-        form_no: searchTerm,
-        phone_no: shipping.phone_no,
-      }
-    );
-    setResult(data.singleCoursePurchaseData);
-    setLoading(false);
+    if (!shipping.phone_no) {
+      setError("No Phone number found!");
+      return;
+    }
+    try {
+      // Handle the search logic here
+      e.preventDefault();
+      setLoading(true);
+      const { data } = await axios.post(
+        "https://itder.com/api/search-purchase-data",
+        {
+          form_no: searchTerm,
+          phone_no: shipping.phone_no,
+        }
+      );
+      setResult(data.singleCoursePurchaseData);
 
-    console.log("Searching for:", searchTerm);
+      console.log("Searching for:", searchTerm);
+    } catch (err) {
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -56,6 +67,7 @@ const Search = () => {
       )}
       {result && (
         <div className="w-full flex flex-col lg:flex-row items-start justify-center h-full gap-2 ">
+          {error ? <p className="text-red-500">Error</p> : ""}
           <div className="bg-white lg:p-p_30px w-full  ">
             <div className="text-center  flex flex-col justify-center items-center ">
               <p className="text-xl font-bold">Order Information</p>
